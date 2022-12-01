@@ -10,10 +10,10 @@ public class Main {
         skipListExample();
         phaserExample();
         threadPoolExample();
-        InitThreadGroup();
+        initThreadGroup();
     }
 
-    private static void InitThreadGroup(){
+    private static void initThreadGroup(){
         ThreadGroup group = createDummyThreadGroup();
         group.list();
 

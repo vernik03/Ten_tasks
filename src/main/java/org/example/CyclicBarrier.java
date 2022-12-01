@@ -1,5 +1,5 @@
 package org.example;
-public class CyclicBarrier  {
+public class CyclicBarrier {
     private int waitingParties = 0;
     private final int trippingParties;
     public CyclicBarrier(int trippingParties) {

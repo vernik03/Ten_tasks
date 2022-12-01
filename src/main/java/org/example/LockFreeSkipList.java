@@ -3,14 +3,14 @@ package org.example;
 import java.util.concurrent.atomic.AtomicMarkableReference;
 public class LockFreeSkipList<T> {
     final long maxLevel;
-    final Node<T> head;
-    final Node<T> tail;
+    final node<T> head;
+    final node<T> tail;
     public LockFreeSkipList(long maxLevel) {
         this.maxLevel = maxLevel;
-        this.head = new Node<T>(Integer.MIN_VALUE, (int)maxLevel);
-        this.tail = new Node<T>(Integer.MAX_VALUE, (int)maxLevel);
+        this.head = new node<T>(Integer.MIN_VALUE, (int)maxLevel);
+        this.tail = new node<T>(Integer.MAX_VALUE, (int)maxLevel);
         for (int i = 0; i < head.next.length; i++) {
-            head.next[i] = new AtomicMarkableReference<LockFreeSkipList.Node<T>>(tail, false);
+            head.next[i] = new AtomicMarkableReference<node<T>>(tail, false);
         }
     }
 
@@ -20,20 +20,20 @@ public class LockFreeSkipList<T> {
 
     public boolean add(T x) {
         int topLevel = (int)(Math.random() * maxLevel);
-        Node<T>[] predecessors = new Node[(int)maxLevel + 1];
-        Node<T>[] successors = new Node[(int)maxLevel + 1];
+        node<T>[] predecessors = new node[(int)maxLevel + 1];
+        node<T>[] successors = new node[(int)maxLevel + 1];
         while (true) {
             boolean found = find(x, predecessors, successors);
             if (found) {
                 return false;
             } else {
-                Node<T> newNode = new Node<T>(x, topLevel, (int)maxLevel);
+                node<T> newNode = new node<T>(x, topLevel, (int)maxLevel);
                 for (int level = 0; level <= topLevel; level++) {
-                    Node<T> successor = successors[level];
+                    node<T> successor = successors[level];
                     newNode.next[level].set(successor, false);
                 }
-                Node<T> predecessor = predecessors[0];
-                Node<T> successor = successors[0];
+                node<T> predecessor = predecessors[0];
+                node<T> successor = successors[0];
                 newNode.next[0].set(successor, false);
                 if (!predecessor.next[0].compareAndSet(successor, newNode, false, false)) {
                     continue;
@@ -54,15 +54,15 @@ public class LockFreeSkipList<T> {
 
     public boolean remove(T x) {
         int bottomLevel = 0;
-        Node<T>[] predecessors = new Node[(int)maxLevel + 1];
-        Node<T>[] succesors = new Node[(int)maxLevel + 1];
-        Node<T> successor = null;
+        node<T>[] predecessors = new node[(int)maxLevel + 1];
+        node<T>[] succesors = new node[(int)maxLevel + 1];
+        node<T> successor = null;
         while (true) {
             boolean found = find(x, predecessors, succesors);
             if (!found) {
                 return false;
             } else {
-                Node<T> nodeToRemove = succesors[bottomLevel];
+                node<T> nodeToRemove = succesors[bottomLevel];
                 for (int level = nodeToRemove.maxLevel;
                      level >= bottomLevel+1; level--) {
                     boolean[] marked = {false};
@@ -89,12 +89,12 @@ public class LockFreeSkipList<T> {
         }
     }
 
-    private boolean find(T x, Node<T>[] preds, Node<T>[] succs) {
+    private boolean find(T x, node<T>[] preds, node<T>[] succs) {
         int bottomLevel = 0;
         int key = x.hashCode();
         boolean[] marked = {false};
         boolean snip;
-        Node<T> pred = null, curr = null, succ = null;
+        node<T> pred = null, curr = null, succ = null;
         retry:
         while (true) {
             pred = head;
@@ -126,7 +126,7 @@ public class LockFreeSkipList<T> {
         int bottomLevel = 0;
         int v = x.hashCode();
         boolean[] marked = {false};
-        Node<T> pred = head, curr = null, succ = null;
+        node<T> pred = head, curr = null, succ = null;
         for (int level = (int)maxLevel; level >= bottomLevel; level--) {
             curr = pred.next[level].getReference();
             while (true) {
@@ -146,27 +146,27 @@ public class LockFreeSkipList<T> {
         return (curr.key == v);
     }
 
-    private static final class Node<T> {
+    private static final class node<T> {
         final T value;
         final int key;
-        final AtomicMarkableReference<Node<T>>[] next;
+        final AtomicMarkableReference<node<T>>[] next;
         private int maxLevel;
-        public Node(int key, int maxLevel) {
+        public node(int key, int maxLevel) {
             this.maxLevel = maxLevel;
             this.value = null;
             this.key = key;
             this.next = new AtomicMarkableReference[maxLevel + 1];
             for (int i = 0; i < next.length; i++) {
-                next[i] = new AtomicMarkableReference<Node<T>>(null,false);
+                next[i] = new AtomicMarkableReference<node<T>>(null,false);
             }
         }
-        public Node(T x, int height, int maxLevel) {
+        public node(T x, int height, int maxLevel) {
             this.maxLevel = maxLevel;
             this.value = null;
             this.key = x.hashCode();
             this.next = new AtomicMarkableReference[maxLevel + 1];
             for (int i = 0; i < next.length; i++) {
-                next[i] = new AtomicMarkableReference<Node<T>>(null,false);
+                next[i] = new AtomicMarkableReference<node<T>>(null,false);
             }
         }
     }

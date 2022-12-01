@@ -9,11 +9,11 @@ public class ThreadInformationPrinter {
     public ThreadInformationPrinter(ThreadGroup threadGroup, long timeout) {
         this.threadGroup = threadGroup;
         this.timeout = timeout;
-        Thread printerThread = new Thread(this::ThreadInfoPrinterWorkerThread);
+        Thread printerThread = new Thread(this::threadInfoPrinterWorkerThread);
         printerThread.start();
     }
 
-    private static void PrintThreadGroupInformation(ThreadGroup group) {
+    private static void printThreadGroupInformation(ThreadGroup group) {
         ThreadGroup[] groups = new ThreadGroup[group.activeGroupCount() + 1];
         group.enumerate(groups);
         groups[groups.length - 1] = group;
@@ -25,7 +25,7 @@ public class ThreadInformationPrinter {
         }
     }
 
-    private static void PrintThreadInformation(ThreadGroup group) {
+    private static void printThreadInformation(ThreadGroup group) {
         Thread[] threads = new Thread[group.activeCount()];
         group.enumerate(threads);
 
@@ -36,13 +36,13 @@ public class ThreadInformationPrinter {
                     + "id: " + thread.getId());
         }
     }
-    private void ThreadInfoPrinterWorkerThread() {
+    private void threadInfoPrinterWorkerThread() {
         while(true) {
             System.out.println("Thread group hierarchy: ");
-            PrintThreadGroupInformation(threadGroup);
+            printThreadGroupInformation(threadGroup);
             System.out.println();
             System.out.println("Thread information: ");
-            PrintThreadInformation(threadGroup);
+            printThreadInformation(threadGroup);
             System.out.println();
             System.out.println();
 
