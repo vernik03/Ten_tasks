@@ -36,7 +36,6 @@ public class ThreadInformationPrinter {
                     + "id: " + thread.getId());
         }
     }
-
     private void ThreadInfoPrinterWorkerThread() {
         while(true) {
             System.out.println("Thread group hierarchy: ");

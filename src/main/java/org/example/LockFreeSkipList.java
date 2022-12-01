@@ -20,7 +20,6 @@ public class LockFreeSkipList<T> {
 
     public boolean add(T x) {
         int topLevel = (int)(Math.random() * maxLevel);
-
         Node<T>[] predecessors = new Node[(int)maxLevel + 1];
         Node<T>[] successors = new Node[(int)maxLevel + 1];
         while (true) {
@@ -146,10 +145,10 @@ public class LockFreeSkipList<T> {
         }
         return (curr.key == v);
     }
+
     private static final class Node<T> {
         final T value;
         final int key;
-
         final AtomicMarkableReference<Node<T>>[] next;
         private int maxLevel;
         public Node(int key, int maxLevel) {
@@ -170,7 +169,5 @@ public class LockFreeSkipList<T> {
                 next[i] = new AtomicMarkableReference<Node<T>>(null,false);
             }
         }
-
     }
-
 }

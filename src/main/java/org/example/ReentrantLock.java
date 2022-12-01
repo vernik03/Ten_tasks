@@ -4,7 +4,6 @@ public class ReentrantLock {
     private boolean locked = false;
     private Thread lockedBy = null;
     private int lockCount = 0;
-
     public synchronized void lock() throws InterruptedException {
         while(locked && lockedBy != Thread.currentThread()) {
             wait();

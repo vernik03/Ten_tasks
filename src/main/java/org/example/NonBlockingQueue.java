@@ -5,7 +5,6 @@ import java.util.concurrent.atomic.AtomicReference;
 class Node<T> {
     public T val;
     public AtomicReference<Node<T>> next;
-
     public Node(T val, AtomicReference<Node<T>> next) {
         this.val = val;
         this.next = next;

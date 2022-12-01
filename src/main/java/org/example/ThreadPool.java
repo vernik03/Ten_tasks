@@ -34,11 +34,9 @@ public class ThreadPool {
             threads[i].start();
         }
     }
-
     public void addTask(Runnable task) {
         scheduled.offer(task);
     }
-
     public void stop() {
         shouldStop.set(true);
 
